@@ -4,6 +4,50 @@
 
 本项目严格按照论文《开放集工业故障诊断：基于LPVG-EP-DyGAT的理论框架与方法论深度研究报告》实现了完整的开放集故障诊断框架。
 
+## 项目整体逻辑（从配置到评估）
+
+入口脚本是 `scripts/train.py`，整体流程按 Hydra 配置驱动，核心步骤如下：
+
+1. **加载配置与数据集**  
+   - 配置入口：`config/main.yaml`  
+   - 数据集类：`data/CWRUOpenSet`、`data/BDAEOpenSet`  
+   - 将 `dataset/model/method` 子配置展开为运行参数。  
+2. **构建 LPVG 图或图特征**  
+   - 若模型为 `lpvg_ep_dygat`：使用 `data/lpvg_builder_enhanced.py::EnhancedLPVGBuilder` 构建图；  
+     由 `data/graph_utils.py::GraphBatchCollator` 将图批量化为 `node_features + edge_index`。  
+   - 其余模型：使用 `data/lpvg_builder.py::LPVGBuilder` 生成图级统计特征。  
+3. **创建模型**  
+   - `models/lpvg_ep_dygat.py::create_lpvg_ep_dygat`  
+   - 其他模型走 `LPVG_MLP` 等路径。  
+4. **训练与评估**  
+   - `core/trainer_evidential.py::EvidentialTrainer` 训练 LPVG-EP-DyGAT。  
+   - 使用 `models/evidential_classifier.py::EvidentialLoss`（EDL + KL + 原型损失），  
+     并在评估阶段调用 `open_set_prediction` 计算未知类判断、H-score、AUROC 等指标。  
+
+该逻辑完整体现了“信号 → LPVG → DyGAT → 证据原型分类 → 开放集决策”的端到端流程。
+
+## lpvg_ep 方法流程（LPVG-EP-DyGAT 端到端）
+
+`lpvg_ep_dygat` 的核心入口是 `models/lpvg_ep_dygat.py::LPVGEPDyGAT`，其前向流程如下：
+
+1. **输入**  
+   - `node_features`: LPVG 图节点特征  
+   - `adj_lpvg`: LPVG 邻接矩阵（或由 `GraphBatchCollator` 提供的图结构）  
+2. **DyGAT 编码**  
+   - `self.dygat(node_features, adj_lpvg)`  
+   - 对应文件：`models/dygat_residual.py::DyGATWithInitialResidual`  
+3. **全局池化**  
+   - `global_graph_pooling` 将节点嵌入聚合为图级嵌入 `graph_embedding`  
+4. **证据原型分类**  
+   - `self.evidential_classifier(graph_embedding)`  
+   - 对应文件：`models/evidential_classifier.py::EvidentialPrototypicalClassifier`  
+   - 输出证据 `evidence`、狄利克雷参数 `alpha`、信念 `belief` 与不确定性 `uncertainty`  
+5. **开放集判别（推理阶段）**  
+   - `predict()` 内部调用 `open_set_prediction`：  
+     当 `uncertainty > threshold` 时判为未知类，否则输出已知类最大信念类别。  
+
+这条路径对应源码中的 `forward()` → `forward_batch()` → `predict()` 三个关键方法。
+
 ## 核心组件实现
 
 ### 1. 增强版 LPVG 图构建器 (`lpvg_builder_enhanced.py`)
