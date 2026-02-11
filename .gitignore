@@ -13,6 +13,9 @@ HIT-dataset/
 *.npy
 *.mat
 
+# Cached preprocessed data
+.cache/
+
 # Python caches
 **/__pycache__/
 *.pyc
