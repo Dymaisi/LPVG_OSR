@@ -10,7 +10,7 @@
 
 1. **加载配置与数据集**  
    - 配置入口：`config/main.yaml`  
-   - 数据集类：`data.cwru_osr.CWRUOpenSet`、`data.bdae_osr.BDAEOpenSet`  
+   - 数据集类：`data/cwru_osr.py::CWRUOpenSet`、`data/bdae_osr.py::BDAEOpenSet`  
    - 将 `dataset/model/method` 子配置展开为运行参数。  
 2. **构建 LPVG 图或图特征**  
    - 若模型为 `lpvg_ep_dygat`：使用 `data/lpvg_builder_enhanced.py::EnhancedLPVGBuilder` 构建图；  
@@ -33,6 +33,7 @@
 1. **输入**  
    - `node_features`: LPVG 图节点特征  
    - `adj_lpvg`: LPVG 邻接矩阵 `(N, N)`，也可直接传 `GraphBatchCollator` 输出的稀疏边索引 `edge_index (2, E)`  
+     （在 `models/dygat_residual.py` 中通过 `adj_lpvg.dim() == 2 and adj_lpvg.size(0) == 2` 自动识别边索引格式）  
 2. **DyGAT 编码**  
    - `self.dygat(node_features, adj_lpvg)`  
    - 对应文件：`models/dygat_residual.py::DyGATWithInitialResidual`  
