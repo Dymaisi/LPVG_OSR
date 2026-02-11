@@ -1,0 +1,21 @@
+# OpenMax 开放集识别方法
+method:
+  name: openmax
+  
+  # OpenMax 参数
+  weibull:
+    tailsize: 20              # 拟合 Weibull 分布的样本数
+    distance_type: eucos      # eucos, euclidean, cosine
+    
+  # 距离计算
+  distance:
+    alpha_rank: 10            # 使用前 alpha_rank 个最大激活值
+    
+  # 阈值
+  threshold:
+    percentile: 95            # 阈值百分位
+    
+  # 训练参数
+  training:
+    save_mav: true            # 保存 Mean Activation Vectors
+    mav_dir: outputs/mav

@@ -1,0 +1,23 @@
+# Data and large artifacts
+dataset/
+outputs/
+checkpoints/
+logs/
+results/
+visualizations/
+drive-download-*/
+HIT-dataset/
+
+# Model checkpoints and arrays
+*.pth
+*.npy
+*.mat
+
+# Python caches
+**/__pycache__/
+*.pyc
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/

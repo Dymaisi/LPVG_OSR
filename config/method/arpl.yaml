@@ -1,0 +1,23 @@
+# ARPL (Adversarial Reciprocal Points Learning)
+method:
+  name: arpl
+  
+  # ARPL 参数
+  arpl:
+    use_rpn: true             # 是否使用 Reciprocal Point Network
+    num_reciprocal_points: 1  # 每个类别的互反点数量
+    lambda_rpl: 0.1           # 互反点损失权重
+    
+  # 对抗训练
+  adversarial:
+    enable: true
+    lambda_adv: 0.1
+    
+  # 实例化损失
+  instantiation_loss:
+    type: cross_entropy
+    
+  # 阈值
+  threshold:
+    percentile: 95
+    metric: distance

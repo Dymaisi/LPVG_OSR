@@ -1,0 +1,33 @@
+# LPVG + MLP 模型配置
+model:
+  name: lpvg_mlp
+  
+  # LPVG 参数
+  lpvg:
+    m: 1                      # 穿透参数
+    extract_features: true    # 是否提取图特征
+    
+  # 图特征提取
+  graph_features:
+    - num_nodes
+    - num_edges
+    - avg_degree
+    - max_degree
+    - density
+    - avg_clustering
+    - transitivity
+    - assortativity
+    - diameter
+    
+  # MLP 分类器
+  classifier:
+    hidden_dims: [256, 128, 64]
+    activation: relu
+    dropout: 0.3
+    use_batchnorm: true
+    
+  # 特征嵌入维度
+  embedding_dim: 64
+  
+  # 输出
+  num_classes: 3  # 已知类的数量，由 dataset.known_classes 决定

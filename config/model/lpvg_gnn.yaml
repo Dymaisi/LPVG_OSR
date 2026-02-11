@@ -1,0 +1,33 @@
+# LPVG + GNN 模型配置
+model:
+  name: lpvg_gnn
+  
+  # LPVG 参数
+  lpvg:
+    m: 1                      # 穿透参数
+    use_edge_features: true   # 是否使用边特征
+    
+  # GNN 架构
+  gnn:
+    type: gcn                 # gcn, gat, graphsage
+    num_layers: 3
+    hidden_dims: [64, 64, 32]
+    activation: relu
+    dropout: 0.3
+    use_batchnorm: true
+    
+  # 图池化
+  pooling:
+    type: global_mean         # global_mean, global_max, global_attention
+    
+  # 分类器
+  classifier:
+    hidden_dims: [128, 64]
+    activation: relu
+    dropout: 0.3
+    
+  # 特征嵌入维度
+  embedding_dim: 64
+  
+  # 输出
+  num_classes: 3  # 已知类的数量

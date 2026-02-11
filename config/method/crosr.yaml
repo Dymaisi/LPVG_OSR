@@ -1,0 +1,23 @@
+# CROSR (Classification-Reconstruction for Open Set Recognition)
+method:
+  name: crosr
+  
+  # 重构损失权重
+  lambda_recon: 0.1
+  
+  # 自编码器
+  autoencoder:
+    encoder_dims: [64, 32, 16]
+    decoder_dims: [16, 32, 64]
+    latent_dim: 8
+    activation: relu
+    
+  # 损失函数
+  loss:
+    classification: cross_entropy
+    reconstruction: mse
+    
+  # 阈值
+  threshold:
+    percentile: 95
+    metric: reconstruction_error

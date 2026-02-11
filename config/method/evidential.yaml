@@ -1,0 +1,13 @@
+# Evidential (EP) 开放集方法配置
+method:
+  name: evidential
+
+  loss:
+    lambda_kl: 0.01
+    lambda_proto: 0.01
+    kl_annealing: true
+
+  threshold:
+    uncertainty: 0.80
+    dynamic: true
+    candidates: 50

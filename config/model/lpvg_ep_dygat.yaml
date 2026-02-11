@@ -1,0 +1,35 @@
+# LPVG-EP-DyGAT 模型配置
+model:
+  name: lpvg_ep_dygat
+
+  # 图模型训练通常需要更小的 batch
+  batch_size: 4
+
+  # LPVG + DyGAT 结构参数
+  node_feature_dim: 5
+  dygat_hidden_dims: [32, 32, 16]
+  dygat_num_heads: 4
+  dygat_dropout: 0.3
+  lambda_residual: 2.0
+  alpha_residual: 0.1
+  use_dynamic_graph: false
+  top_k: 5
+  mu: 0.5
+
+  # EP 证据原型参数
+  sigma: 2.5
+  learn_prototypes: true
+
+  # 全局池化
+  global_pooling: mean
+
+  # 输出
+  num_classes: 3  # 由 dataset.known_classes 覆盖
+
+  # 增强 LPVG 图构建参数
+  lpvg:
+    P: 2
+    local_window: 5
+    use_zscore: true
+    use_instantaneous_freq: true
+    max_nodes: 128
